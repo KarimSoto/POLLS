@@ -2,6 +2,9 @@ li a {
     color: green;
 }
 
+
 body {
-    background:  white url("images/Paisaje.jpg") fixed;
+        background: url("images/Paisaje.jpg") no-repeat center center fixed;
+        background-size: cover;
 }
+
