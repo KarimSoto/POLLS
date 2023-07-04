@@ -1,11 +1,15 @@
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import render, get_object_or_404, redirect
 from django.http import HttpResponse, Http404, HttpResponseRedirect
 from django.template import loader
 from .models import Question, Choice
 from django.urls import reverse
 from django.views import generic
 from django.utils import timezone
+from django.contrib.auth.decorators import login_required
+
+
 # Create your views here.
+
 
 class IndexView(generic.ListView):
     template_name = "polls/index.html"
@@ -46,9 +50,23 @@ class DetailView(generic.DetailView):
         return Question.objects.filter(pub_date__lte=timezone.now())
 
 
-class ResultsView(generic.DetailView):
-    model = Question
-    template_name = "polls/results.html"
+
+def results(request, pk):
+    question = get_object_or_404(Question, pk=pk)
+    
+    labels = []
+    data = []
+
+    for choice in question.choice_set.all():
+        labels.append(choice.choice_text)
+        data.append(choice.votes)
+
+    return render(
+        request,
+        'polls/results.html',
+        {'question': question, 'labels': labels, 'data': data}
+    )
+
 
 
 def vote(request, question_id):
@@ -72,3 +90,7 @@ def vote(request, question_id):
         # with POST data. This prevents data from being posted twice if a
         # user hits the Back button.
         return HttpResponseRedirect(reverse("polls:results", args=(question.id,)))
+    
+
+def Index(request):
+    return render(request, 'superindex.html')
