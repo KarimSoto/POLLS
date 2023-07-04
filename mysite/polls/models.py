@@ -29,6 +29,16 @@ class Choice(models.Model):
     def __str__(self):
         return self.choice_text
     
+class DominoStaff(models.Model):
+    class meta:
+        permissions=[("sell_pizzas","Puede vender Pizzas")]
 
-   
+class Repartidor(DominoStaff):
+    class meta:
+        proxy=True
+        permissions=[("deliver_pizzas","Puede repartir Pizzas")]
 
+class Cocinero(DominoStaff):
+    class meta:
+        proxy=True
+        permissions=[("cook_pizzas","Puede cocinar Pizzas")]

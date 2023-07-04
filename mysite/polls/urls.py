@@ -13,5 +13,6 @@ urlpatterns = [
     path('', views.Index, name="superindex"),
     path('mv1/', views.my_view1, name='my_view1'),
     path('mv2/', views.my_view2, name='my_view2'),
-    
+    path('salir/', views.salir, name='salir'),
+    path('sm/', views.some_view, name='some'),
 ]
