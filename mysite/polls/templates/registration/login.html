@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    
+    <title>Login</title>
+</head>
+<body> 
+    <p>Inicio de sesion requerido</p>
+
+     <form method="POST">
+        {% csrf_token %}
+            <label for="usuario">
+                usuario
+                <input type="text" name="username">
+            </label>
+            <label for="pass">
+                contrasena
+                <input type="password" name='password'>
+            </label>
+
+            <button type="submit">
+                 IniciarSesion
+            </button>
+     </form>
+     
+
+</body>
+</html>
