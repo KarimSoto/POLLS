@@ -1,15 +1,16 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from django.http import HttpResponse, Http404, HttpResponseRedirect, HttpResponseForbidden
 from django.template import loader
-from .models import Question, Choice
+from .models import Question, Choice, Vote
 from django.urls import reverse
 from django.views import View, generic
 from django.utils import timezone
 from django.contrib.auth.decorators import login_required
-from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
 from django.contrib.auth import logout
 from .permissions import user_gains_perms 
 from django.contrib.auth.decorators import permission_required
+import random
 
 # Create your views here.
 
@@ -35,7 +36,7 @@ class IndexView(LoginRequiredMixin, View):
     context_object_name = "latest_question_list"
 
     def get(self, request, *args, **kwargs):
-      if not self.request.user.has_perm('polls.view_Users'):    #  'nombre_de_la_app.    view o change o add el que queramos_ nombre_del_modelo'
+      if not self.request.user.has_perm('auth.view_user'):    #  'nombre_de_la_app.    view o change o add el que queramos_ nombre_del_modelo'
             return HttpResponseForbidden()
       else: 
         # Obtenemos el queryset de preguntas
@@ -77,37 +78,25 @@ def results(request, pk):
 
     for choice in question.choice_set.all():
         labels.append(choice.choice_text)
-        data.append(choice.votes)
+        data.append(choice.vote_set.count())
+
+    cantidadcolor = len(labels)
+    colores = []
+
+    for _ in range(cantidadcolor):
+        r = random.randint(0, 255)
+        g = random.randint(0, 255)
+        b = random.randint(0, 255)
+        colores.append(f'rgb({r}, {g}, {b})')
 
     return render(
         request,
         'polls/results.html',
-        {'question': question, 'labels': labels, 'data': data}
+        {'question': question, 'labels': labels, 'data': data, 'colores': colores}
     )
 
 
 
-def vote(request, question_id):
-    question = get_object_or_404(Question, pk=question_id)
-    try:
-        selected_choice = question.choice_set.get(pk=request.POST["choice"])
-    except (KeyError, Choice.DoesNotExist):
-        # Redisplay the question voting form.
-        return render(
-            request,
-            "polls/detail.html",
-            {
-                "question": question,
-                "error_message": "You didn't select a choice.",
-            },
-        )
-    else:
-        selected_choice.votes += 1
-        selected_choice.save()
-        # Always return an HttpResponseRedirect after successfully dealing
-        # with POST data. This prevents data from being posted twice if a
-        # user hits the Back button.
-        return HttpResponseRedirect(reverse("polls:results", args=(question.id,)))
     
 @login_required
 def Index(request):
@@ -137,11 +126,48 @@ def salir(request):
 @login_required(login_url="/accounts/login/")
 def some_view(request):
     user_id = request.user.id  # Obtén el ID del usuario actual
-    usuario_anteriormente_tenia_permisos, _ = user_gains_perms(request, user_id)  # Llama al método user_gains_perms
+    usuario_anteriormente_tenia_permisos = user_gains_perms(request, user_id)  # Llama al método user_gains_perms
 
     if usuario_anteriormente_tenia_permisos:
-        contexto = "El usuario ya tenía los permisos."
+        contexto = "tienes estos permisos"
+        return render(request, 'polls/some_template.html', {'contexto': contexto})
     else:
-        contexto = "¡Felicidades! Permisos añadidos exitosamente."
+        contexto = "No tienes estos permisos"
+        return render(request, 'polls/some_template.html', {'contexto': contexto})
+    
 
-    return render(request, 'polls/some_template.html', {'contexto': contexto})
+
+
+
+
+
+
+def vote(request, question_id):
+    question = get_object_or_404(Question, pk=question_id)
+    try:
+        selected_choice = question.choice_set.get(pk=request.POST["choice"])
+    except (KeyError, Choice.DoesNotExist):
+        # Redisplay the question voting form.
+        return render(
+            request,
+            "polls/detail.html",
+            {
+                "question": question,
+                "error_message": "You didn't select a choice.",
+            },
+        )
+    else:
+        
+        user = request.user  # Assuming you have user authentication enabled
+    
+        # Create a new Vote object
+        vote = Vote(choice=selected_choice, nombreusuario=user)
+        vote.save()
+        # Always return an HttpResponseRedirect after successfully dealing
+        # with POST data. This prevents data from being posted twice if a
+        # user hits the Back button.
+        return HttpResponseRedirect(reverse("polls:results", args=(question.id,)))
+    
+
+
+   

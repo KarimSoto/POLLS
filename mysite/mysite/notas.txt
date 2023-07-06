@@ -1,2 +1,3 @@
-Francisco     password=Germany281
-ksoto         password=RukaHot34
+admin: ksoto         password=RukaHot34
+
+usuario2: Megumin    password=Rio23#$
