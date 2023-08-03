@@ -1,3 +1,29 @@
-<h1>Tenemos el siguiente aviso para ti</h1>
+{% extends "../base/base.html" %}
 
-{{contexto}}
+{% block template %}
+  
+
+
+  {% block segundo %}
+        <h1>Tenemos el siguiente aviso para ti</h1>
+        {{ contexto }}
+  {% endblock %}
+  
+  
+
+  <nav aria-label="Page navigation example">
+    <ul class="pagination justify-content-center">
+      <li class="page-item disabled">
+        <a class="page-link">Previous</a>
+      </li>    
+      <li class="page-item"><a class="page-link" href="{% url 'polls:some' %}">1</a></li>
+      <li class="page-item"><a class="page-link" href="{% url 'polls:superindex' %}">2</a></li>
+      <li class="page-item"><a class="page-link" href="{% url 'polls:my_view1' %}">3</a></li>
+      <li class="page-item"><a class="page-link" href="{% url 'polls:my_view2' %}">4</a></li>
+      <li class="page-item">
+        <a class="page-link" href="#">Next</a>
+      </li>
+    </ul>
+  </nav>
+{% endblock %}
+

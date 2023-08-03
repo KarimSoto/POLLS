@@ -12,6 +12,9 @@ from .permissions import user_gains_perms
 from django.contrib.auth.decorators import permission_required
 import random
 
+
+from django.contrib.auth.tokens import PasswordResetTokenGenerator
+
 # Create your views here.
 
 
@@ -171,3 +174,12 @@ def vote(request, question_id):
 
 
    
+def prueba(request):
+    token_generator= PasswordResetTokenGenerator()
+    token= token_generator.make_token(request.user)
+    return render(request, 'polls/tokenhome.html',{'toke':token})
+
+
+def validate_token(request):
+    
+    return render(request, 'file.html',{})

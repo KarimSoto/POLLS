@@ -1,4 +1,7 @@
+{% extends "polls/some_template.html" %}
+
+{% block segundo %}
 <h1>Welcome to Furukawa</h1>
 
-
 <a href="{% url 'polls:salir' %}">Cerrar sesión</a>
+{% endblock %}

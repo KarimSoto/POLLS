@@ -42,6 +42,73 @@
         color: white;
        }
 
+       span {
+            color: black;
+            font-family: "Times New Roman", Times, serif; 
+            font-size: 1.2rem;
+            z-index: 2;
+            background-color: transparent;
+        }
+
+        .contenedor {
+            max-width: 300px;
+            position: fixed;
+            right: calc(0% + 7px);
+            align-items: center;
+            justify-content: center;
+            
+
+        }
+            .tarjeta {
+                min-height: 50px;
+                max-width: 100%;
+                padding: 10px;
+                word-wrap: break-word;
+                border-radius: 10%;
+                box-shadow: 16px 14px 20px #0000008c;
+                overflow: hidden;
+                position: relative;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
+            
+
+            .tarjeta::before {
+                content: "";
+                position: absolute;
+                height: 400px;
+                width: 400px;
+                animation: rotar 2.5s linear infinite;
+            }
+            
+            .in .tarjeta, .in .tarjeta::after {background-color: #85C1E9;}
+            .wa .tarjeta, .wa .tarjeta::after {background-color: #F7DC6F;}
+            .er .tarjeta, .er .tarjeta::after {background-color: #EC7063;}
+            .su .tarjeta, .su .tarjeta::after {background-color: #58D68D ;}
+
+            .in .tarjeta::before { background-image: conic-gradient(#2B3DD7 30deg, transparent 120deg);}
+            .wa .tarjeta::before { background-image: conic-gradient(#F39C12 30deg, transparent 120deg);}
+            .er .tarjeta::before { background-image: conic-gradient(#922B21  30deg, transparent 120deg);}
+            .su .tarjeta::before { background-image: conic-gradient(#185C30 30deg, transparent 120deg);}
+
+            .tarjeta::after {
+                content: "";
+                position: absolute;
+                height: calc(100% - 5px);
+                width: calc(100% - 5px);
+                border-radius: 10%;
+                
+            }
+
+            @keyframes rotar{
+                from {
+                    transform:rotate(0deg);
+                }
+                to{
+                    transform:rotate(360deg);
+                }
+            }
 
     </style>
 
@@ -91,7 +158,47 @@
         <span class="visually-hidden">Next</span>
       </button>
     </div>
+
+
+
+
+    {% if messages %}
+    {% for message in messages %}
+    
+    {% if message.level == DEFAULT_MESSAGE_LEVELS.SUCCESS %}
+    <div class="su contenedor" id="contenedor">
+        <div class="tarjeta"><span>{{message}}</span></div>
+    </div>
+    {% endif %}
+    
+    {% if message.level == DEFAULT_MESSAGE_LEVELS.INFO %}
+    <div class="in contenedor" id="contenedor">
+        <div class="tarjeta"><span>{{message}}</span></div>
+    </div>
+    {% endif %}
+    
+    {% if message.level == DEFAULT_MESSAGE_LEVELS.WARNING %}
+    <div class="wa contenedor" id="contenedor">
+        <div class="wtarjeta"><span>{{message}}</span></div>
+    </div>
+    {% endif %}
+    
+    {% if message.level == DEFAULT_MESSAGE_LEVELS.ERROR %}
+    <div class="er contenedor" id="contenedor">
+        <div class="tarjeta"><span>{{message}}</span></div>
+    </div>
+    {% endif %}
+    {% endfor %}
+    {% endif %}
    
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-geWF76RCwLtnZ8qwWowPQNguL3RmwHVBC9FhGdlKrxdiJJigb/j/68SIy3Te4Bkz" crossorigin="anonymous"></script>
+    <script>
+      setTimeout(function() {
+          var alertContainer = document.getElementById('contenedor');
+          if (alertContainer) {
+              alertContainer.style.display = 'none';
+          }
+      }, 7000); // 7 segundos (6000 milisegundos)
+  </script>
   </body>
 </html>
