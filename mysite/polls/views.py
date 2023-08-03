@@ -11,6 +11,7 @@ from django.contrib.auth import logout
 from .permissions import user_gains_perms 
 from django.contrib.auth.decorators import permission_required
 import random
+from django.contrib import messages
 
 
 from django.contrib.auth.tokens import PasswordResetTokenGenerator
@@ -103,6 +104,9 @@ def results(request, pk):
     
 @login_required
 def Index(request):
+    nombre_usuario = request.user.username
+    mensaje = f'Bienvenido, {nombre_usuario}!'
+    messages.warning(request, mensaje)
     return render(request, 'polls/superindex.html')
 
 
@@ -110,12 +114,18 @@ def Index(request):
 @login_required(redirect_field_name="my_redirect_field") #la diferencia es que cuando inicias sesion aqui, no te redirecciona al url de este def
 def my_view1(request):
     # Código de la vista
+    nombre_usuario = request.user.username
+    mensaje = f'Bienvenido, {nombre_usuario}!'
+    messages.error(request, mensaje)
     return render(request, 'polls/my_view1.html')
 
 
 @login_required(login_url="/accounts/login/")
 def my_view2(request):
     # Código de la vista
+    nombre_usuario = request.user.username
+    mensaje = f'Bienvenido, {nombre_usuario}!'
+    messages.success(request, mensaje)
     return render(request, 'polls/my_view2.html')
 
 
@@ -128,6 +138,9 @@ def salir(request):
 
 @login_required(login_url="/accounts/login/")
 def some_view(request):
+    nombre_usuario = request.user.username
+    mensaje = f'Bienvenido, {nombre_usuario}!'
+    messages.info(request, mensaje)
     user_id = request.user.id  # Obtén el ID del usuario actual
     usuario_anteriormente_tenia_permisos = user_gains_perms(request, user_id)  # Llama al método user_gains_perms
 
@@ -151,12 +164,14 @@ def vote(request, question_id):
         selected_choice = question.choice_set.get(pk=request.POST["choice"])
     except (KeyError, Choice.DoesNotExist):
         # Redisplay the question voting form.
+        messages.warning(request,"No selecciono ninguna opcion")
         return render(
             request,
             "polls/detail.html",
             {
                 "question": question,
                 "error_message": "You didn't select a choice.",
+                
             },
         )
     else:
@@ -166,6 +181,11 @@ def vote(request, question_id):
         # Create a new Vote object
         vote = Vote(choice=selected_choice, nombreusuario=user)
         vote.save()
+        
+        if selected_choice.is_correct:
+            messages.success(request, "¡Felicidades! Acertaste.")
+        else:
+            messages.error(request, "Ups... Respuesta incorrecta.")
         # Always return an HttpResponseRedirect after successfully dealing
         # with POST data. This prevents data from being posted twice if a
         # user hits the Back button.

@@ -27,6 +27,10 @@ class Choice(models.Model):
     
     question = models.ForeignKey(Question, on_delete=models.CASCADE)
     choice_text = models.CharField(max_length=200)
+    is_correct = models.BooleanField(default=False)  # Añadimos el campo booleano
+
+    def __str__(self):
+        return self.choice_text
     
 class Vote(models.Model):
     
